@@ -1,2 +1,2 @@
 # paradigmas
-Paradigmas 2016
+Paradigmas de Programação - ELC117 - 2016-1
