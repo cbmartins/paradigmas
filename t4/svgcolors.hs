@@ -35,7 +35,11 @@ genRects n w h = (((10-n) * w, 0.0), w, h) : genRects (n-1) w h
 -- Se houverem mais retangulos que cores, havera retangulos com cores repetidas.
 -- Se houverem menos retangulos que cores, algumas cores nao serao usadas.
 applyStyles :: [String] -> [Rect] -> [(Rect,String)]
-applyStyles styles rects = zip rects (cycle styles)
+applyStyles styles rects = myzip (cycle styles) rects
+
+myzip :: [String] -> [Rect] -> [(Rect,String)]
+myzip _ [] = []
+myzip (x:xs) (y:ys) = (y, x) : myzip xs ys
       
 {--
      O codigo abaixo gera um arquivo "mycolors.svg".
