@@ -1,4 +1,5 @@
 import Text.Printf
+import System.Random
 
 type Point     = (Float,Float)
 type Rect      = (Point,Float,Float)
@@ -40,6 +41,14 @@ applyStyles styles rects = myzip (cycle styles) rects
 myzip :: [String] -> [Rect] -> [(Rect,String)]
 myzip _ [] = []
 myzip (x:xs) (y:ys) = (y, x) : myzip xs ys
+
+geraRGB :: Int -> String
+geraRGB n = "fill:rgb(0,"++ show (255 - n*3) ++ ",255)"
+
+geraCor :: Int -> [String]
+geraCor 0 = []
+geraCor n = (geraRGB n) : geraCor (n-1)
+
       
 {--
      O codigo abaixo gera um arquivo "mycolors.svg".
@@ -50,6 +59,6 @@ main :: IO ()
 main = do
   let
     rects = genRects 10 50 50                          -- Deve gerar 10 retangulos de 50x50
-    styles = ["fill:rgb(140,0,0)","fill:rgb(0,140,0)"] -- Estilo: vermelho e verde
+    styles = geraCor 10 -- Estilo: gradiente de ciano
     rectstyles = applyStyles styles rects
   writeFile "mycolors.svg" (writeAllRects maxWidth maxHeight rectstyles)
