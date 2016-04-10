@@ -37,11 +37,27 @@ ciclo n lis = lis ++ ciclo (n - 1) lis
 -- > numera ["abacaxi","mamao","banana"]
 -- [(1,"abacaxi"),(2,"mamao"),(3,"banana")]
 
+numera' :: Int -> [String] -> [(Int, String)]
+numera' _ [] = []
+numera' n (x:xs) = (n, x) : numera' (n + 1) xs
+
+numera :: [String] -> [(Int, String)]
+numera [] = []
+numera lis = numera' 1 lis
+
 --6. Explique, em forma de comentário, o resultado de cada expressão abaixo.
 
 -- a) [ (x,y) | x <- [1..5], even x, y <- [(x + 1)..6], odd y ]
+
+-- [(2,3),(2,5),(4,5)]
+-- gera uma lista de tuplas (x, y) onde x é um número par entre 1 e 5, inclusive, e y é um número ímpar entre x+1 e 6 
+-- (3 e 5 no caso e x = 2 e 5 no caso de x = 4)
+
 -- b) [ a ++ b | a <- ["lazy","big"], b <- ["frog", "dog"]]
+-- gera uma lista com strings resultantes da concatenação de todos os elementos de a com todos os elementos de b
+
 -- c) concat [ [a,'-'] | a <- "paralelepipedo", not (elem a "aeiou")]
+-- gera uma string com todas as vogais de "paralelepípedo" substituídas por "-"
 
 --7. G. Malcolm, Univ. Liverpool) Write a function crossProduct :: [a] -> [b] -> [(a,b)] that takes two lists xs and ys, 
 -- and returns the list of all possible pairings:
