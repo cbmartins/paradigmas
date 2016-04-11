@@ -1,3 +1,5 @@
+import Data.Char
+
 --1. Escreva uma função addSuffix :: String -> [String] -> [String] usando list comprehension, para adicionar um dado 
 -- sufixo às strings contidas numa lista. Exemplo:
 
@@ -54,9 +56,13 @@ numera lis = numera' 1 lis
 -- (3 e 5 no caso e x = 2 e 5 no caso de x = 4)
 
 -- b) [ a ++ b | a <- ["lazy","big"], b <- ["frog", "dog"]]
+
+-- ["lazyfrog","lazydog","bigfrog","bigdog"]
 -- gera uma lista com strings resultantes da concatenação de todos os elementos de a com todos os elementos de b
 
 -- c) concat [ [a,'-'] | a <- "paralelepipedo", not (elem a "aeiou")]
+
+-- "p-r-l-l-p-p-d-"
 -- gera uma string com todas as vogais de "paralelepípedo" substituídas por "-"
 
 --7. G. Malcolm, Univ. Liverpool) Write a function crossProduct :: [a] -> [b] -> [(a,b)] that takes two lists xs and ys, 
@@ -66,6 +72,15 @@ numera lis = numera' 1 lis
 -- without using the above list comprehension. 
 -- (As an exercise in problem decomposition, try first defining a "helper" function pairWithAll :: a -> [b] -> [(a,b)] 
 -- that pairs its first argument with each element in its second.)
+
+pairWithAll :: a -> [b] -> [(a, b)]
+pairWithAll _ [] = []
+pairWithAll x (y:ys) = (x, y) : pairWithAll x ys
+
+crossProduct :: [a] -> [b] -> [(a, b)]
+crossProduct _ [] = []
+crossProduct [] _ = []
+crossProduct x y = pairWithAll (head(x)) y ++ crossProduct (tail(x)) y
 
 --8. Nesta questão você deverá usar list comprehension. Suponha que um retângulo seja representado por uma tupla 
 -- (Float,Float,Float,Float), contendo respectivamente as coordenadas x e y do ponto no seu canto superior esquerdo, 
@@ -78,16 +93,49 @@ numera lis = numera' 1 lis
 -- [(0.0,0.0,5.5,5.5),(5.5,0.0,5.5,5.5),(11.0,0.0,5.5,5.5)]
 -- Obs.: Use conversão explícita de tipos quando misturar Int e Float.
 
+genRects :: Int -> (Int, Int) -> [(Float, Float, Float, Float)]
+genRects 0 _ = []
+genRects n (x, y) = [(fromIntegral x + xs, fromIntegral y, 5.5, 5.5) | xs <- [0.0, 5.5.. 5.5 * (fromIntegral n-1)]]
+
 --9. Escreva uma função recursiva que receba uma lista de tuplas e decomponha cada uma delas, gerando uma tupla de listas, conforme o exemplo abaixo:
 
 -- > func [(1,3),(2,4)]
 -- ([1,2], [3,4])
 
+func :: [(Int, Int)] -> ([Int], [Int])
+func [] = ([],[])
+func (x:xs) = (fst x : fst(func xs), snd x : snd(func xs))
+
 --10. Refaça o exercício anterior usando list comprehension.
+func' :: [(Int, Int)] -> ([Int], [Int])
+func' [] = ([], [])
+func' lis = ([fst x | x <- lis], [snd x | x <- lis])
 
 --11. Refaça o exercício anterior usando uma função de alta ordem.
+func'' :: [(Int, Int)] -> ([Int], [Int])
+func'' [] = ([], [])
+func'' lis = (map fst lis, map snd lis)
 
 --12. O código em validaCPF.hs ilustra a validação dos dígitos verificadores de um CPF. Este código usa let para definir subexpressões, 
 -- isto é, expressões intermediárias que irão compor o resultado da função. Observe que este código tem trechos um tanto repetitivos
 -- para calcular o primeiro e o segundo dígitos. Você deverá reescrever este código, criando uma função auxiliar que será chamada 
 -- 2 vezes dentro de isCpfOk. Nessa função auxiliar, você deverá usar where para definir subexpressões.
+
+isCpfOk :: [Int] -> Bool
+isCpfOk cpf = 
+  let -- calcula primeiro digito
+      digitos1 = take 9 cpf
+      expr1 = (sum $ zipWith (*) digitos1 [10,9..2]) `mod` 11
+      dv1 = if expr1 < 2 then 0 else 11-expr1
+
+      -- calcula segundo digito
+      digitos2 = digitos1 ++ [dv1]
+      expr2 = (sum $ zipWith (*) digitos2 [11,10..2]) `mod` 11
+      dv2 = if expr2 < 2 then 0 else 11-expr2
+   in dv1 == cpf !! 9 && dv2 == cpf !! 10
+
+main = do
+  let cpf = "12345678909"
+      digitos = (map digitToInt cpf)
+      result = isCpfOk digitos
+  putStrLn (show result)
