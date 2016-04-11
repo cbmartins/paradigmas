@@ -121,7 +121,7 @@ func'' lis = (map fst lis, map snd lis)
 -- para calcular o primeiro e o segundo dígitos. Você deverá reescrever este código, criando uma função auxiliar que será chamada 
 -- 2 vezes dentro de isCpfOk. Nessa função auxiliar, você deverá usar where para definir subexpressões.
 
-isCpfOk :: [Int] -> Bool
+{-isCpfOk :: [Int] -> Bool
 isCpfOk cpf = 
   let -- calcula primeiro digito
       digitos1 = take 9 cpf
@@ -133,6 +133,28 @@ isCpfOk cpf =
       expr2 = (sum $ zipWith (*) digitos2 [11,10..2]) `mod` 11
       dv2 = if expr2 < 2 then 0 else 11-expr2
    in dv1 == cpf !! 9 && dv2 == cpf !! 10
+
+main = do
+  let cpf = "12345678909"
+      digitos = (map digitToInt cpf)
+      result = isCpfOk digitos
+  putStrLn (show result)
+-}
+
+isCpfOk cpf = 
+  let -- calcula primeiro digito
+      digitos1 = take 9 cpf
+      dv1 = aux 10 digitos1
+
+      -- calcula segundo digito
+      digitos2 = digitos1 ++ [dv1]
+      dv2 = aux 11 digitos2
+   in dv1 == cpf !! 9 && dv2 == cpf !! 10
+
+aux :: Int -> [Int] -> Int
+aux n x = if expr < 2 then 0 else 11-expr
+	where
+		expr = (sum $ zipWith (*) x [n, n-1..2]) `mod` 11
 
 main = do
   let cpf = "12345678909"
