@@ -4,18 +4,41 @@
 % ?- zeroInit([0,6,7]).
 % true.
 
+zeroInit([H|_]) :- H =:= 0.
+
 % 2.Defina um predicado has5(L) que é verdadeiro se L for uma lista de 5 elementos. Resolva este exercício sem usar um predicado auxiliar.
 
+has5(L) :- length(L, N), N =:= 5.
+
 % 3.Defina um predicado hasN(L,N) que é verdadeiro se L for uma lista de N elementos.
+
+hasN(L, N) :- length(L, X), N =:= X.
 
 % 4.Defina um predicado potN0(N,L), de forma que L seja uma lista de potências de 2, com expoentes de N a 0. Exemplo de uso:
 % ?- potN0(7,L).
 % L = [128, 64, 32, 16, 8, 4, 2, 1]
 
+potN0(0, [1]).
+potN0(N, L) :-
+	N > 0,
+	X is 2 ^ N,
+	N1 is N - 1,
+	L = [X|T], 
+	potN0(N1, T).
+
 % 5.Defina um predicado zipmult(L1,L2,L3), de forma que cada elemento da lista L3 seja o produto dos elementos de L1 e 
 % L2 na mesma posição do elemento de L3. Exemplo:
 % ?­ zipmult([1,2,3],[2,2,2],L). 
 % L = [2, 4, 6].
+
+zipmult([], [], []).
+zipmult(L1, L2, L3) :- 
+	L1 = [H1|T1], 
+	L2 = [H2|T2], 
+	L3 = [_|T3], 
+	N is H1 * H2, 
+	L3 = [N|T3], 
+	zipmult(T1, T2, T3).
 
 % 6.Defina um predicado potencias(N,L), de forma que L seja uma lista com as N primeiras potências de 2, sendo a primeira 2^0 e assim por diante, 
 % conforme o exemplo abaixo:
