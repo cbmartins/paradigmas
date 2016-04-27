@@ -48,9 +48,29 @@ zipmult(L1, L2, L3) :-
 % L = []
 % Dica: defina um predicado auxiliar.
 
+potencias(0, []).
+potencias(N, L) :- aux(0, N, L).
+
+aux(N, N, []).
+aux(I, N, L) :- 
+	I =< N, 
+	N1 is 2 ^ I, 
+	L = [_|T],
+	L = [N1|T],
+	N2 is I + 1,
+	aux(N2, N, T).
+	
 % 7.Defina um predicado positivos(L1,L2), de forma que L2 seja uma lista só com os elementos positivos de L1, conforme o exemplo abaixo:
 % ?­ positivos([­-1,0,1,-­2,9],L). 
 % L = [1, 9]
+
+positivos([], []).
+positivos([H|T], L2) :-
+	L2 = [H2|T2],
+	H > 0,
+	H2 = H,
+	positivos(T, T2);
+	positivos(T, L2).
 
 % 8.Considere que L1 e L2 sejam permutações de uma lista de elementos distintos, sem repetições. Sabendo disso, defina um predicado 
 % mesmaPosicao(A,L1,L2) para verificar se um elemento A está na mesma posição nas listas L1 e L2. Exemplo de uso
@@ -58,6 +78,9 @@ zipmult(L1, L2, L3) :-
 % true
 % ?­ mesmaPosicao(b,[a,b,c,d,e],[e,d,c,b,a]).
 % false
+
+mesmaPosicao(H, [H|_], [H|_]).
+mesmaPosicao(X, [_|T], [_|T1]) :- mesmaPosicao(X, T, T1).
 
 % 9.Dada uma lista de N alunos, deseja-se escolher NP alunos (NP < N) para formar uma comissão. Para isso, defina um predicado 
 % comissao(NP,LP,C), que permita gerar as possíveis combinações C com NP elementos da lista LP. Exemplo:
@@ -69,8 +92,24 @@ zipmult(L1, L2, L3) :-
 % ?­ comissao(0,[maria,jose,joao,mario],C).
 % C = []
 
+comissaoaux(1, [H|_], [H]).
+comissaoaux(N, [_|T], L) :- comissaoaux(N, T, L).
+comissaoaux(N, [H|T1], [H|T2]) :- 
+	N =\= 1,
+	N1 is N - 1,
+	comissaoaux(N1, T1, T2).
+
+comissao(NP, LP, C) :- findall(X, comissaoaux(NP, LP, X), C).
+
 % 10.(Adaptado de OBI2006-F1N1) Tem-se N azulejos 10cm x 10cm e, com eles, deve-se montar um conjunto de quadrados de modo a utilizar todos os 
 % azulejos dados, sem sobrepô-los. Inicialmente, deve-se montar o maior quadrado possível; então, com os azulejos que sobraram, deve-se montar o maior 
 % quadrado possível, e assim sucessivamente. Por exemplo, se forem dados 31 azulejos, o conjunto montado terá 4 quadrados. Para resolver este problema, 
 % você deverá definir um predicado azulejos(NA, NQ), de forma que NQ seja o número de quadrados que se deve montar com NA azulejos. Dica: use os predicados sqrt e floor,
 % pré-definidos em Prolog.
+
+azulejos(0, 0).
+azulejos(NA, NQ) :- 
+	X is floor(sqrt(NA)),
+	N1 is NA - X * X,
+	azulejos(N1, NQ1),
+	NQ is NQ1 + 1.
